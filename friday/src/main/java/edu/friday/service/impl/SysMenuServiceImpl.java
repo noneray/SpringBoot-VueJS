@@ -49,7 +49,7 @@ public class SysMenuServiceImpl implements SysMenuService {
      */
     @Override
     public List<SysMenu> selectMenuList(Long userId) {
-        return null;
+        return selectMenuList(new SysMenuVO(), userId);
     }
 
     /**
@@ -103,7 +103,12 @@ public class SysMenuServiceImpl implements SysMenuService {
      */
     @Override
     public List<Long> selectMenuListByRoleId(Long roleId) {
-        return null;
+        List<Long> rs = new ArrayList<>();
+        List<SysMenu> menuList = sysMenuRepository.selectMenuListByRoleId(roleId);
+        for (SysMenu sysMenu : menuList) {
+            rs.add(sysMenu.getMenuId());
+        }
+        return rs;
     }
 
     /**
