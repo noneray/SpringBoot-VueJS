@@ -23,7 +23,9 @@ export default {
     ])
   },
   created() {
-    if (!this.roles.includes('admin')) {
+    // 原判断条件无法生效，roles不返回用户姓名，暂时修改判断条件
+    // if (!this.roles.includes('admin')) {
+    if (!this.roles.includes('ROLE_DEFAULT')) {
       this.currentRole = 'editorDashboard'
     }
   }
