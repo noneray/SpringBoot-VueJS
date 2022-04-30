@@ -30,7 +30,7 @@ module.exports = {
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
   devServer: {
-    host: '127.0.0.1',
+    host: '0.0.0.0',
     port: port,
     proxy: {
       [process.env.VUE_APP_BASE_API]: {

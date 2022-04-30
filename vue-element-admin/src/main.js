@@ -20,12 +20,12 @@ import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
 
-import { parseTime, resetForm, selectDictLabel, download, handTree } from './utils/commonUtil'
+import { parseTime, resetForm, selectDictLabel, download, handleTree } from './utils/commonUtil'
 Vue.prototype.parseTime = parseTime
 Vue.prototype.resetForm = resetForm
 Vue.prototype.selectDictLabel = selectDictLabel
 Vue.prototype.download = download
-Vue.prototype.handTree = handTree
+Vue.prototype.handleTree = handleTree
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
