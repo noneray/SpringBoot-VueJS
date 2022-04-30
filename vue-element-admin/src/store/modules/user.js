@@ -7,7 +7,8 @@ const state = {
   name: '',
   avatar: '',
   introduction: '',
-  roles: []
+  roles: [],
+  permission: []
 }
 
 const mutations = {
@@ -25,6 +26,9 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
+  },
+  SET_PERMISSIONS: (state, permissions) => {
+    state.permissions = permissions
   }
 }
 
@@ -34,9 +38,9 @@ const actions = {
     const { username, password, uuid } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password, uuid: uuid }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        const { token } = response
+        setToken(token)
+        commit('SET_TOKEN', token)
         resolve()
       }).catch(error => {
         reject(error)
@@ -47,25 +51,19 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
-
-        if (!data) {
-          reject('Verification failed, please Login again.')
-        }
-
-        const { roles, name, avatar, introduction } = data
-
+      getInfo(state.token).then(res => {
+        const user = res.user
+        const avatar = user.avatar === '' ? require(`@/assets/image/profile.jpg`) : user.avatar
         // roles must be a non-empty array
-        if (!roles || roles.length <= 0) {
-          reject('getInfo: roles must be a non-null array!')
+        if (!res.roles && res.roles.length > 0) {
+          commit('SET_ROLES', res.roles)
+          commit('SET_PERMISSIONS', res.permissions)
+        } else {
+          commit('SET_ROLES', ['ROLE_DEFAULT'])
         }
-
-        commit('SET_ROLES', roles)
-        commit('SET_NAME', name)
+        commit('SET_NAME', user.username)
         commit('SET_AVATAR', avatar)
-        commit('SET_INTRODUCTION', introduction)
-        resolve(data)
+        resolve(res)
       }).catch(error => {
         reject(error)
       })
@@ -92,6 +90,13 @@ const actions = {
     })
   },
 
+  fedLogOut({ commit }) {
+    return new Promise(resolve => {
+      commit('SET_TOKEN', '')
+      removeToken()
+      resolve()
+    })
+  },
   // remove token
   resetToken({ commit }) {
     return new Promise(resolve => {

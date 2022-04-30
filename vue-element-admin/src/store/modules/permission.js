@@ -1,4 +1,6 @@
-import { asyncRoutes, constantRoutes } from '@/router'
+import { constantRoutes } from '@/router'
+import { getRouters } from '@/api/menu'
+import LayOut from '@/layout/index'
 
 /**
  * Use meta.role to determine if the current user has permission
@@ -34,6 +36,26 @@ export function filterAsyncRoutes(routes, roles) {
   return res
 }
 
+export function filterAsyncRouter(asyncRouterMap) {
+  return asyncRouterMap.filter(route => {
+    if (route.component) {
+      if (route.component === 'Layout') {
+        route.component = LayOut
+      } else {
+        route.component = loadView(route.component)
+      }
+    }
+    if (route.children != null && route.children && route.children.length) {
+      route.children = filterAsyncRouter(route.children)
+    }
+    return true
+  })
+}
+
+export const loadView = (view) => {
+  return (resolve) => require([`@/views/${view}`], resolve)
+}
+
 const state = {
   routes: [],
   addRoutes: []
@@ -47,18 +69,32 @@ const mutations = {
 }
 
 const actions = {
-  generateRoutes({ commit }, roles) {
+  generateRoutes({ commit }) {
     return new Promise(resolve => {
-      let accessedRoutes
-      if (roles.includes('admin')) {
-        accessedRoutes = asyncRoutes || []
-      } else {
-        accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
-      }
-      commit('SET_ROUTES', accessedRoutes)
-      resolve(accessedRoutes)
+      getRouters().then(res => {
+        const accessedRoutes = filterAsyncRouter(res.data)
+        accessedRoutes.push({
+          path: '*',
+          redirect: '/404',
+          hidden: true
+        })
+        commit('SET_ROUTES', accessedRoutes)
+        resolve(accessedRoutes)
+      })
     })
   }
+  // generateRoutes({ commit }, roles) {
+  //   return new Promise(resolve => {
+  //     let accessedRoutes
+  //     if (roles.includes('admin')) {
+  //       accessedRoutes = asyncRoutes || []
+  //     } else {
+  //       accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+  //     }
+  //     commit('SET_ROUTES', accessedRoutes)
+  //     resolve(accessedRoutes)
+  //   })
+  // }
 }
 
 export default {
