@@ -83,7 +83,7 @@ service.interceptors.response.use(
       })
     } else if (res.code !== 200) {
       Notification.error({
-        title: res.data.message
+        title: res.msg
       })
       return Promise.reject('error')
     } else {
