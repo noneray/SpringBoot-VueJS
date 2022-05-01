@@ -20,12 +20,25 @@ import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
 
+import Pagination from '@/components/Pagination'
+// 全局组件挂载
+Vue.component('Pagination', Pagination)
+
 import { parseTime, resetForm, selectDictLabel, download, handleTree } from './utils/commonUtil'
 Vue.prototype.parseTime = parseTime
 Vue.prototype.resetForm = resetForm
 Vue.prototype.selectDictLabel = selectDictLabel
 Vue.prototype.download = download
 Vue.prototype.handleTree = handleTree
+Vue.prototype.msgSuccess = function(msg) {
+  this.$message({ showClose: true, message: msg, type: 'success' })
+}
+Vue.prototype.msgError = function(msg) {
+  this.$message({ showClose: true, message: msg, type: 'error' })
+}
+Vue.prototype.msgInfo = function(msg) {
+  this.$message.info(msg)
+}
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
