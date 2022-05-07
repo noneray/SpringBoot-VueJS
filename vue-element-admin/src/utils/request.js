@@ -77,7 +77,7 @@ service.interceptors.response.use(
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        store.dispatch('LogOut').then(() => {
+        store.dispatch('user/fedLogOut').then(() => {
           location.reload()
         })
       })
